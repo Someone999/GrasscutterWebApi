@@ -12,7 +12,6 @@ import com.hsman.web.help.Help;
 import com.hsman.web.requests.data.CommandRequestData;
 import com.hsman.web.responses.ApiResponse;
 import io.javalin.http.Context;
-import kotlin.Suppress;
 
 import java.util.ArrayList;
 
@@ -38,12 +37,16 @@ public class MultiCommandHandler implements CommandHandler {
                 targetPlayer = request.getTargetPlayer().getPlayer();
             }
 
-            CommandUtils.Invoke(model.command, sourcePlayer, targetPlayer);
+            for(int i = 0; i < model.executeCount ; i++) {
+                CommandUtils.Invoke(model.command, sourcePlayer, targetPlayer);
+            }
+
 
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("command", model.command);
             jsonObject.addProperty("sourcePlayer", sourcePlayer == null ? null : sourcePlayer.getUid());
             jsonObject.addProperty("targetPlayer", targetPlayer == null ? null : targetPlayer.getUid());
+            jsonObject.addProperty("executedCount", model.executeCount);
             executedCommands.add(jsonObject);
         }
 

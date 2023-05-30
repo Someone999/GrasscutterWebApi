@@ -12,4 +12,7 @@ public class MultiCommandModel {
 
     @Getter
     String command;
+
+    @Getter
+    int executeCount = 1;
 }

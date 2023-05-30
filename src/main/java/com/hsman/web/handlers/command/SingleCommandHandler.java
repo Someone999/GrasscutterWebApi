@@ -15,15 +15,22 @@ public class SingleCommandHandler implements CommandHandler {
     public void handle(CommandRequestData request, Context context) {
         var jsonData = request.getData();
         var commandString = jsonData.get("command").getAsString();
+        var executeCount = jsonData.has("executeCount")
+                ? jsonData.get("executeCount").getAsInt()
+                : 1;
         var sourcePlayer = request.getSourcePlayer().getPlayer();
         var targetPlayer = request.getTargetPlayer().getPlayer();
 
-        Grasscutter.getCommandMap().invoke(sourcePlayer, targetPlayer, commandString);
+        for(int i = 0; i < executeCount; i++) {
+            Grasscutter.getCommandMap().invoke(sourcePlayer, targetPlayer, commandString);
+        }
+
 
         JsonObject data = new JsonObject();
         data.addProperty("command", commandString);
         data.addProperty("sourcePlayer", sourcePlayer == null ? null : sourcePlayer.getUid());
         data.addProperty("targetPlayer", targetPlayer == null ? null : targetPlayer.getUid());
+        data.addProperty("executedCount", executeCount);
         ApiResponse.createSuccess(data).send(context);
     }
 
