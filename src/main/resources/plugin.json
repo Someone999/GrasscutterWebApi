@@ -1,0 +1,6 @@
+{
+  "name": "HSMan's",
+  "version": "1.0.0",
+  "description": "A plugin with some features",
+  "mainClass": "com.hsman.plugin.HsMansPlugin"
+}
