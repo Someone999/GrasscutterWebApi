@@ -69,6 +69,6 @@ public class JsonConfigElement implements ConfigElement {
 
     @Override
     public Object getValue() {
-        return null;
+        return configElementHashMap;
     }
 }
