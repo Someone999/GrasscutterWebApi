@@ -63,7 +63,7 @@ public class JsonConfigElement implements ConfigElement {
         configElementHashMap = expendObject(jsonObject);
     }
     @Override
-    public ConfigElement getConfigElement(String key) {
+    public ConfigElement get(String key) {
         return configElementHashMap.get(key);
     }
 

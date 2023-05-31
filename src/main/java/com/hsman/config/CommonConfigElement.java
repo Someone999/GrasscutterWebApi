@@ -14,7 +14,7 @@ public class CommonConfigElement implements ConfigElement {
     }
     @Override
     @SuppressWarnings("unchecked")
-    public ConfigElement getConfigElement(String key) {
+    public ConfigElement get(String key) {
         if(innerVal instanceof HashMap<?, ?>) {
             return ((HashMap<String, ConfigElement>) innerVal).get(key);
         }
