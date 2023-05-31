@@ -1,6 +1,7 @@
 package com.hsman.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
 
@@ -19,8 +20,8 @@ public class PathUtils {
             if(r) {
                 return selfPath.getPath();
             }
-            return workingDir;
 
+            return workingDir;
         }
 
         if(gcPluginPath.exists()) {
@@ -29,5 +30,36 @@ public class PathUtils {
         else {
             return selfPath.getPath();
         }
+    }
+
+    public static File createFileInPluginPath(String fileName, boolean throwWhenExisted) {
+        var path = Paths.get(getPluginPath(), fileName).toString();
+        File file = new File(path);
+        if(file.exists()) {
+            if(throwWhenExisted) {
+                throw new IllegalStateException("File existed");
+            }
+            return file;
+        }
+
+        try {
+           return file.createNewFile() ? file : null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public static File getFileInPluginPath(String fileName, boolean autoCreate) {
+        var path = Paths.get(getPluginPath(), fileName).toString();
+        File file = new File(path);
+        if(file.exists()) {
+            return file;
+        }
+
+        if(autoCreate) {
+            return createFileInPluginPath(fileName, false);
+        }
+
+        return null;
     }
 }

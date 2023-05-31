@@ -31,7 +31,7 @@ public class RouteObjectPool<T> {
         members.put(routeName, obj);
     }
 
-    public void addObjectByClass(Class<? extends T> clazz, Object... args) throws AmbiguousMethodMatchedException, RuntimeException {
+    public void addObjectByClass(Class<? extends T> clazz, Object... args) throws AmbiguousMethodMatchedException {
 
         var routeName = getRouteName(clazz);
         if(args.length == 0) {
