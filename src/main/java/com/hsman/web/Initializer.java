@@ -6,12 +6,14 @@ import com.hsman.web.dispatchers.PlayerHandlerDispatcher;
 import com.hsman.web.handlers.command.CommandHandlerManager;
 import com.hsman.web.handlers.command.MultiCommandHandler;
 import com.hsman.web.handlers.command.SingleCommandHandler;
+import com.hsman.web.middlewares.ApiMiddlewareManager;
+import com.hsman.web.middlewares.TokenVerifyApiMiddleware;
 import com.hsman.web.objectmanager.AmbiguousMethodMatchedException;
 import com.hsman.web.dispatchers.DispatcherManager;
 
 public class Initializer {
 
-    static void InitDispatchers() {
+    static void initDispatchers() {
         try {
             DispatcherManager dispatcherMgr = DispatcherManager.getInstance();
             dispatcherMgr.addObjectByClass(GlobalDispatcher.class);
@@ -22,7 +24,7 @@ public class Initializer {
         }
     }
 
-    static void InitCommandHandlers() {
+    static void initCommandHandlers() {
         var commandHandlerMgr = CommandHandlerManager.getInstance();
         try {
             commandHandlerMgr.addObjectByClass(MultiCommandHandler.class);
@@ -32,18 +34,27 @@ public class Initializer {
         }
     }
 
-    static void InitPlayerFeatureHandlers() {
+    static void initApiMiddleware() {
+        try {
+            ApiMiddlewareManager.getInstance().addObjectByClass(TokenVerifyApiMiddleware.class);
+        } catch (AmbiguousMethodMatchedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static void initPlayerFeatureHandlers() {
 
     }
 
-    static void InitHandlers() {
-        InitCommandHandlers();
-        InitPlayerFeatureHandlers();
+    static void initHandlers() {
+        initCommandHandlers();
+        initPlayerFeatureHandlers();
     }
 
-    public static void Initialize(){
+    public static void initialize(){
         MainHandler.enabled = true;
-        InitDispatchers();
-        InitHandlers();
+        initDispatchers();
+        initHandlers();
+        initApiMiddleware();
     }
 }

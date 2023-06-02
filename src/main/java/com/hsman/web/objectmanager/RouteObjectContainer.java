@@ -6,7 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class RouteObjectPool<T> {
+public class RouteObjectContainer<T> {
     HashMap<String, T> members = new HashMap<>();
     static String getRouteName(Class<?> clazz) {
         var routeAnnotation = clazz.getAnnotation(Route.class);

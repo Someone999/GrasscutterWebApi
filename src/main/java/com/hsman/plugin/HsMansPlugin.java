@@ -10,7 +10,7 @@ import emu.grasscutter.plugin.Plugin;
 public class HsMansPlugin extends Plugin {
     @Override
     public void onEnable() {
-        Initializer.Initialize();
+        Initializer.initialize();
         Grasscutter.getHttpServer().addRouter(MainRouter.class);
         var cfgFile = PathUtils.createFileInPluginPath("config.json", false);
 

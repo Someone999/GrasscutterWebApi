@@ -1,13 +1,12 @@
 package com.hsman.web.dispatchers;
 
-import com.hsman.web.objectmanager.ObjectPool;
-import com.hsman.web.objectmanager.RouteObjectPool;
+import com.hsman.web.objectmanager.RouteObjectContainer;
 
-public class DispatcherManager extends RouteObjectPool<Dispatcher> {
+public class DispatcherManager extends RouteObjectContainer<Dispatcher> {
     private DispatcherManager() {
     }
 
-    static DispatcherManager instance;
+    volatile static DispatcherManager instance;
     static final Object locker = new Object();
     public static DispatcherManager getInstance() {
         if(instance == null) {

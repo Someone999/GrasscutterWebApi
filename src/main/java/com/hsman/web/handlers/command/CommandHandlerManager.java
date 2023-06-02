@@ -1,13 +1,12 @@
 package com.hsman.web.handlers.command;
 
-import com.hsman.web.handlers.player.PlayerFeatureHandlerManager;
-import com.hsman.web.objectmanager.RouteObjectPool;
+import com.hsman.web.objectmanager.RouteObjectContainer;
 
-public class CommandHandlerManager extends RouteObjectPool<CommandHandler> {
+public class CommandHandlerManager extends RouteObjectContainer<CommandHandler> {
     private CommandHandlerManager() {
     }
 
-    static CommandHandlerManager instance;
+    volatile static CommandHandlerManager instance;
     static final Object locker = new Object();
     public static CommandHandlerManager getInstance() {
         if(instance == null) {

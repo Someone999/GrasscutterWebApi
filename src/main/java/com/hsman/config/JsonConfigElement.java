@@ -2,11 +2,16 @@ package com.hsman.config;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.hsman.config.converters.IterableConfigElement;
+import com.hsman.utils.JsonUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
-public class JsonConfigElement implements ConfigElement {
+public class JsonConfigElement implements IterableConfigElement {
 
     HashMap<String, ConfigElement> configElementHashMap;
 
@@ -20,7 +25,8 @@ public class JsonConfigElement implements ConfigElement {
             }
 
             if(elem.isJsonPrimitive()) {
-                objs.add(elem.getAsString());
+                var jsonVal = JsonUtils.jsonPrimitiveConverter(elem.getAsJsonPrimitive());
+                objs.add(jsonVal);
                 continue;
             }
 
@@ -42,7 +48,8 @@ public class JsonConfigElement implements ConfigElement {
         for(var entry : jsonObject.entrySet()) {
             var val = entry.getValue();
             if(val.isJsonPrimitive()) {
-                configElementHashMap.put(entry.getKey(), new CommonConfigElement(entry.getValue().getAsString()));
+                var jsonVal = JsonUtils.jsonPrimitiveConverter(entry.getValue().getAsJsonPrimitive());
+                configElementHashMap.put(entry.getKey(), new CommonConfigElement(jsonVal));
                 continue;
             }
 
@@ -70,5 +77,19 @@ public class JsonConfigElement implements ConfigElement {
     @Override
     public Object getValue() {
         return configElementHashMap;
+    }
+
+    @Override
+    public void setValue(String key, ConfigElement val) {
+        if(configElementHashMap.containsKey(key)) {
+            configElementHashMap.put(key, val);
+        }
+    }
+
+
+    @NotNull
+    @Override
+    public Iterator<Map.Entry<String, ConfigElement>> iterator() {
+        return configElementHashMap.entrySet().iterator();
     }
 }

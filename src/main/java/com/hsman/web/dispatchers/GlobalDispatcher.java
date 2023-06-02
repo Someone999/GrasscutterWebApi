@@ -3,14 +3,13 @@ package com.hsman.web.dispatchers;
 import com.google.gson.JsonObject;
 import com.hsman.utils.JsonUtils;
 import com.hsman.web.annotations.Route;
-import com.hsman.web.help.ArgumentDescription;
 import com.hsman.web.help.ArgumentDescriptions;
+import com.hsman.web.middlewares.ApiMiddleware;
+import com.hsman.web.middlewares.ApiMiddlewareManager;
 import com.hsman.web.requests.ApiRequest;
 import com.hsman.web.responses.ApiResponse;
-import emu.grasscutter.Grasscutter;
 import io.javalin.http.Context;
 
-import java.io.IOException;
 @Route(name = "<Global>")
 public class GlobalDispatcher implements Dispatcher {
     @Override
@@ -22,6 +21,24 @@ public class GlobalDispatcher implements Dispatcher {
             ApiResponse.createInvalidRequest(data).send(context);
             return;
         }
+
+        var middlewares = ApiMiddlewareManager.getInstance().getAllMembers();
+        for(int i = 0; i < middlewares.length ; i++) {
+            ApiMiddleware nextMiddleware = null;
+            if(i + 1 < middlewares.length) {
+                nextMiddleware = (ApiMiddleware) middlewares[i + 1];
+            }
+
+            ((ApiMiddleware) middlewares[i]).setNextMiddleware(nextMiddleware);
+        }
+
+        var firstMiddleware = (ApiMiddleware) middlewares[0];
+        var middlewareResult = firstMiddleware.execute(request, context);
+
+        if(middlewareResult.abort) {
+            return;
+        }
+
 
         var dispatchMgr = DispatcherManager.getInstance();
         var dispatcher = dispatchMgr.getByRoute(request.getType());

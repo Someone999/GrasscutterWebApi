@@ -2,8 +2,9 @@ package com.hsman.web.objectmanager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
-public class ObjectPool<T> {
+public class ObjectContainer<T> {
     ArrayList<T> members = new ArrayList<>();
     public void addObject(T obj) {
         if(members.contains(obj)) {
@@ -41,6 +42,11 @@ public class ObjectPool<T> {
         }
 
         return null;
+    }
+
+    public Object[] getAllMembers() {
+
+        return members.toArray(Object[]::new);
     }
 }
 
