@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.hsman.plugin.eventlistener.EventListeners;
 import com.hsman.utils.CommandUtils;
 import com.hsman.web.annotations.Route;
 import com.hsman.web.help.ArgumentDescription;
@@ -37,13 +38,17 @@ public class MultiCommandHandler implements CommandHandler {
                 targetPlayer = request.getTargetPlayer().getPlayer();
             }
 
+            JsonArray outputs = new JsonArray();
+
             for(int i = 0; i < model.executeCount ; i++) {
                 CommandUtils.Invoke(model.command, sourcePlayer, targetPlayer);
+                outputs.add(EventListeners.getLastCommandOutput());
             }
 
 
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("command", model.command);
+            jsonObject.add("outputs", outputs);
             jsonObject.addProperty("sourcePlayer", sourcePlayer == null ? null : sourcePlayer.getUid());
             jsonObject.addProperty("targetPlayer", targetPlayer == null ? null : targetPlayer.getUid());
             jsonObject.addProperty("executedCount", model.executeCount);

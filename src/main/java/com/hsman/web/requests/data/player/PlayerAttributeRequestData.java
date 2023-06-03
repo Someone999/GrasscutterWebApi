@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 
-public class PlayerFeatureRequestData {
+public class PlayerAttributeRequestData {
 
     @Getter
     PlayerData playerData = new PlayerData();

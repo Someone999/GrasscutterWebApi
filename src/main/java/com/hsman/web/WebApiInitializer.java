@@ -11,7 +11,7 @@ import com.hsman.web.middlewares.TokenVerifyApiMiddleware;
 import com.hsman.web.objectmanager.AmbiguousMethodMatchedException;
 import com.hsman.web.dispatchers.DispatcherManager;
 
-public class Initializer {
+public class WebApiInitializer {
 
     static void initDispatchers() {
         try {

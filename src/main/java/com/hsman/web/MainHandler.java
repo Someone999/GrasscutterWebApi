@@ -15,14 +15,21 @@ import java.nio.charset.StandardCharsets;
 public class MainHandler implements Handler {
 
     public static boolean enabled;
-    static void globalExceptionHandler(Exception exception, Context context) {
+    static void globalDispatchExceptionHandler(Exception exception, Context context) {
         JsonObject data = new JsonObject();
         data.addProperty("message", exception.getMessage());
         data.add("stackTrace", ExceptionUtils.ExceptionStackTrace(exception));
-        ApiResponse.createException(data).send(context);
+        ApiResponse.createApiHandlingException(data).send(context);
     }
-    @Override
-    public void handle(@NotNull Context context) throws Exception {
+
+    static void topLevelExceptionHandler(Exception exception, Context context) {
+        JsonObject data = new JsonObject();
+        data.addProperty("message", exception.getMessage());
+        data.add("stackTrace", ExceptionUtils.ExceptionStackTrace(exception));
+        ApiResponse.createInvalidRequest(data).send(context);
+    }
+
+    public void handleNoTopLevelExceptionHandler(@NotNull Context context) throws Exception {
         if(!enabled) {
             context.res.sendError(404);
             return;
@@ -38,9 +45,18 @@ public class MainHandler implements Handler {
                 DispatcherManager.getInstance().getByRoute("<Global>").dispatch(reqObj, context);
             }
             catch (Exception exception) {
-                globalExceptionHandler(exception, context);
+                globalDispatchExceptionHandler(exception, context);
             }
+        }
+    }
 
+
+    @Override
+    public void handle(@NotNull Context context) {
+        try {
+            handleNoTopLevelExceptionHandler(context);
+        } catch(Exception exception) {
+            topLevelExceptionHandler(exception, context);
         }
     }
 }

@@ -42,8 +42,8 @@ public class ApiResponse {
         return new ApiResponse(-5, "No such dispatcher", data);
     }
 
-    public static ApiResponse createException(JsonObject data) {
-        return new ApiResponse(-6, "Exception occurred", data);
+    public static ApiResponse createApiHandlingException(JsonObject data) {
+        return new ApiResponse(-6, "Exception occurred during api handling.", data);
     }
 
     public static ApiResponse createTokenMismatch(JsonObject data) {
@@ -53,7 +53,7 @@ public class ApiResponse {
     public void send(Context context) {
         Gson gson = new Gson();
         try {
-            context.res.getOutputStream().write(gson.toJson(this).getBytes());
+            context.res.getOutputStream().write(gson.toJson(this).getBytes(StandardCharsets.UTF_8));
             context.res.setStatus(200);
         } catch (IOException e) {
             throw new RuntimeException(e);

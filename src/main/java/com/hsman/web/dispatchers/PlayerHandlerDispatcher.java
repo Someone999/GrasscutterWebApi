@@ -1,14 +1,13 @@
 package com.hsman.web.dispatchers;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.hsman.utils.JsonUtils;
 import com.hsman.web.annotations.Route;
-import com.hsman.web.handlers.player.PlayerFeatureHandler;
-import com.hsman.web.handlers.player.PlayerFeatureHandlerManager;
+import com.hsman.web.handlers.player.PlayerAttributeHandler;
+import com.hsman.web.handlers.player.PlayerAttributeHandlerManager;
 import com.hsman.web.requests.ApiRequest;
-import com.hsman.web.requests.data.player.PlayerFeatureRequestData;
+import com.hsman.web.requests.data.player.PlayerAttributeRequestData;
 import com.hsman.web.responses.ApiResponse;
 import io.javalin.http.Context;
 
@@ -16,8 +15,8 @@ import io.javalin.http.Context;
 public class PlayerHandlerDispatcher implements Dispatcher {
     @Override
     public void dispatch(ApiRequest request, Context context) {
-        PlayerFeatureRequestData requestData = new Gson().fromJson(request.getData(), PlayerFeatureRequestData.class);
-        var handler = PlayerFeatureHandlerManager.getInstance().getByRoute(requestData.getAttribute());
+        PlayerAttributeRequestData requestData = new Gson().fromJson(request.getData(), PlayerAttributeRequestData.class);
+        var handler = PlayerAttributeHandlerManager.getInstance().getByRoute(requestData.getAttribute());
         if(handler == null) {
             errNoHandler(requestData, context);
             return;
@@ -31,7 +30,7 @@ public class PlayerHandlerDispatcher implements Dispatcher {
         }
     }
 
-    void getMethod(PlayerFeatureHandler handler, PlayerFeatureRequestData data, Context context) {
+    void getMethod(PlayerAttributeHandler handler, PlayerAttributeRequestData data, Context context) {
         if(!handler.canGet()) {
             return;
         }
@@ -39,7 +38,7 @@ public class PlayerHandlerDispatcher implements Dispatcher {
         handler.getValue(data, context);
     }
 
-    void setMethod(PlayerFeatureHandler handler, PlayerFeatureRequestData data, Context context) {
+    void setMethod(PlayerAttributeHandler handler, PlayerAttributeRequestData data, Context context) {
         if(!handler.canSet()) {
             return;
         }
@@ -47,7 +46,7 @@ public class PlayerHandlerDispatcher implements Dispatcher {
         handler.setValue(data, context);
     }
 
-    void addMethod(PlayerFeatureHandler handler, PlayerFeatureRequestData data, Context context) {
+    void addMethod(PlayerAttributeHandler handler, PlayerAttributeRequestData data, Context context) {
         if(!handler.canAdd()) {
             return;
         }
@@ -55,7 +54,7 @@ public class PlayerHandlerDispatcher implements Dispatcher {
         handler.addValue(data, context);
     }
 
-    void errNoOperation(PlayerFeatureRequestData requestData, Context context) {
+    void errNoOperation(PlayerAttributeRequestData requestData, Context context) {
         JsonObject data = new JsonObject();
         data.addProperty("errorOperation", requestData.getOperation());
         data.addProperty("availableOperation", "get, set, add");
@@ -63,10 +62,10 @@ public class PlayerHandlerDispatcher implements Dispatcher {
         response.send(context);
     }
 
-    void errNoHandler(PlayerFeatureRequestData requestData,Context context) {
+    void errNoHandler(PlayerAttributeRequestData requestData, Context context) {
         JsonObject data = new JsonObject();
         data.addProperty("errorAttribute", requestData.getAttribute());
-        var mgr = PlayerFeatureHandlerManager.getInstance();
+        var mgr = PlayerAttributeHandlerManager.getInstance();
         data.add("availableAttrs", JsonUtils.fromArray(mgr.getRoutes()));
         ApiResponse response = ApiResponse.createNoAttribute(data);
         response.send(context);
