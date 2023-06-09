@@ -52,7 +52,6 @@ public class WebApiInitializer {
     }
 
     public static void initialize(){
-        MainHandler.enabled = true;
         initDispatchers();
         initHandlers();
         initApiMiddleware();

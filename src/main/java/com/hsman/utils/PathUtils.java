@@ -1,5 +1,9 @@
 package com.hsman.utils;
 
+import com.hsman.result.FileResourceResult;
+import com.hsman.result.ResourceResult;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -32,34 +36,35 @@ public class PathUtils {
         }
     }
 
-    public static File createFileInPluginPath(String fileName, boolean throwWhenExisted) {
+    public static ResourceResult<File> createFileInPluginPath(String fileName, boolean throwWhenExisted) {
         var path = Paths.get(getPluginPath(), fileName).toString();
         File file = new File(path);
-        if(file.exists()) {
+        FileResourceResult result = new FileResourceResult(file);
+        if(result.isExists()) {
             if(throwWhenExisted) {
                 throw new IllegalStateException("File existed");
+            } else {
+                return result;
             }
-            return file;
         }
 
-        try {
-           return file.createNewFile() ? file : null;
-        } catch (IOException e) {
-            return null;
-        }
+        result.create();
+        return result;
     }
 
-    public static File getFileInPluginPath(String fileName, boolean autoCreate) {
+    @NotNull
+    public static ResourceResult<File> getFileInPluginPath(String fileName, boolean autoCreate) {
         var path = Paths.get(getPluginPath(), fileName).toString();
         File file = new File(path);
-        if(file.exists()) {
-            return file;
+        FileResourceResult result = new FileResourceResult(file);
+        if(result.isExists()) {
+            return result;
         }
 
         if(autoCreate) {
             return createFileInPluginPath(fileName, false);
         }
 
-        return null;
+        return result;
     }
 }

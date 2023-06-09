@@ -2,6 +2,7 @@ package com.hsman.utils;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
+import com.hsman.config.ConfigNullValue;
 
 public class JsonUtils {
     public static JsonArray fromArray(String[] arr) {
@@ -27,7 +28,7 @@ public class JsonUtils {
         }
 
         if(jsonPrimitive.isJsonNull()) {
-            return null;
+            return ConfigNullValue.INSTANCE;
         }
 
         throw new IllegalStateException();

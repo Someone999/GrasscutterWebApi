@@ -2,6 +2,7 @@ package com.hsman.config;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.hsman.config.converters.ConfigConverter;
 import com.hsman.config.converters.IterableConfigElement;
 import com.hsman.utils.JsonUtils;
 import org.jetbrains.annotations.NotNull;
@@ -53,6 +54,12 @@ public class JsonConfigElement implements IterableConfigElement {
                 continue;
             }
 
+            if(val.isJsonNull()) {
+                var jsonVal = ConfigNullValue.INSTANCE;
+                configElementHashMap.put(entry.getKey(), new CommonConfigElement(jsonVal));
+                continue;
+            }
+
             if(val.isJsonObject()) {
                 configElementHashMap.put(entry.getKey(), new CommonConfigElement(expendObject(val.getAsJsonObject())));
                 continue;
@@ -67,6 +74,11 @@ public class JsonConfigElement implements IterableConfigElement {
     }
 
     public JsonConfigElement(JsonObject jsonObject) {
+        if(jsonObject == null) {
+            configElementHashMap = new HashMap<>();
+            return;
+        }
+
         configElementHashMap = expendObject(jsonObject);
     }
     @Override
@@ -84,6 +96,15 @@ public class JsonConfigElement implements IterableConfigElement {
         if(configElementHashMap.containsKey(key)) {
             configElementHashMap.put(key, val);
         }
+    }
+
+    @Override
+    public <T> T convert(ConfigConverter<T> converter) {
+        if (converter.canConvertTo(getClass())) {
+            return converter.convert(this);
+        }
+        throw new ClassCastException("Converter can not convert " + getClass().getName() + " to target class");
+
     }
 
 

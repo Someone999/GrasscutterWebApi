@@ -4,5 +4,6 @@ import com.hsman.config.ConfigElement;
 
 public interface ConfigConverter<T> {
     T convert(ConfigElement configElement);
+    boolean canConvertTo(Class<?> clazz);
 }
 

@@ -1,4 +1,4 @@
-package com.hsman.config.converters.result;
+package com.hsman.result;
 
 import lombok.Getter;
 

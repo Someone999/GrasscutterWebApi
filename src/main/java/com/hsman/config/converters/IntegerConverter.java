@@ -7,4 +7,9 @@ public class IntegerConverter implements ConfigConverter<Integer> {
     public Integer convert(ConfigElement configElement) {
         return Integer.parseInt(configElement.getValue().toString());
     }
+
+    @Override
+    public boolean canConvertTo(Class<?> clazz) {
+        return clazz == Integer.class || clazz == int.class;
+    }
 }

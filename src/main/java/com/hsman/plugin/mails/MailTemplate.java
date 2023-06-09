@@ -1,9 +1,7 @@
 package com.hsman.plugin.mails;
 
 import com.hsman.plugin.io.StringReader;
-import emu.grasscutter.plugin.api.Item;
 
-import java.lang.annotation.Documented;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
@@ -20,7 +18,7 @@ public class MailTemplate {
     * You also can combine them unordered like 7d5y6min
     */
     public String delayTime;
-    public static String parseUrl(String urlFormat) {
+    public static String asUrlTag(String urlFormat) {
         String prefix = urlFormat.substring(0, 3);
         if(!prefix.equals("url")) {
             return urlFormat;
@@ -69,12 +67,12 @@ public class MailTemplate {
         return String.format("<type=\"%s\" text=\"%s\" href=\"%s\">",tokens.get(1),tokens.get(2),tokens.get(0));
     }
 
-    static Object invokeBestParseMethod(String str) {
+    static Object invokeMethod(String str) {
         MailTemplate template = new MailTemplate();
         int leftParIdx = str.indexOf('(');
         StringBuilder funcName = new StringBuilder(str.substring(0, leftParIdx));
         funcName.setCharAt(0, Character.toUpperCase(funcName.charAt(0)));
-        String parseMethodName = "parse" + funcName.toString().trim();
+        String parseMethodName = funcName.toString().trim();
         try {
             var parseMethod = MailTemplate.class.getDeclaredMethod(parseMethodName, String.class);
             return parseMethod.invoke(template, str);
@@ -85,17 +83,16 @@ public class MailTemplate {
 
     public static String parseContent(String content) {
         StringBuilder parsedContent = new StringBuilder();
-        Pattern pattern = Pattern.compile("<(\\s*\\w+\\s*\\(.*?\\))\\s*>");
+        Pattern pattern = Pattern.compile("\\$\\{(\\s*\\w+\\s*\\(.*?\\))}\\s*");
         var funcMatcher = pattern.matcher(content);
         while(funcMatcher.find()) {
             for(int i = 1; i < funcMatcher.groupCount() + 1; i++) {
-                var parsedFunc = invokeBestParseMethod(funcMatcher.group(i)).toString();
+                var parsedFunc = invokeMethod(funcMatcher.group(i)).toString();
                 funcMatcher.appendReplacement(parsedContent, parsedFunc);
             }
         }
 
         funcMatcher.appendTail(parsedContent);
-
         return parsedContent.toString();
     }
 }
